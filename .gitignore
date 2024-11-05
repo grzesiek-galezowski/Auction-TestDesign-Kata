@@ -4,3 +4,5 @@
 **/DS_Store/*
 **/DS_Store/*
 **/.DS_Store
+*.cache
+csharp/Auction-TestDesign-Kata/Auction-TestDesign-Kata.v3.ncrunchsolution.user
