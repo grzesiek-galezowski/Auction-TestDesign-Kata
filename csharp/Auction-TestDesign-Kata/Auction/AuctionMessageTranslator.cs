@@ -12,17 +12,31 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
     {
       var data = ParseMessageData(message);
 
-      var currentPriceString = data["CurrentPrice"];
-      var incrementString = data["Increment"];
-      if (string.IsNullOrWhiteSpace(currentPriceString))
+      if (data.IsParseError)
+      {
+        listener.OnParseError("PRICE", "Content");
+        return;
+      }
+
+      data.Value.TryGetValue("CurrentPrice", out var currentPriceString);
+      data.Value.TryGetValue("Increment", out var incrementString);
+      data.Value.TryGetValue("Bidder", out var bidder);
+
+      if (!int.TryParse(currentPriceString, out var currentPrice))
       {
         listener.OnParseError("PRICE", "CurrentPrice");
         return;
       }
-
-      var currentPrice = int.Parse(currentPriceString);
-      var increment = int.Parse(incrementString);
-      var bidder = data["Bidder"];
+      if (!int.TryParse(incrementString, out var increment))
+      {
+        listener.OnParseError("PRICE", "Increment");
+        return;
+      }
+      if (string.IsNullOrWhiteSpace(bidder))
+      {
+        listener.OnParseError("PRICE", "Bidder");
+        return;
+      }
 
       listener.OnBidDetails(currentPrice, increment, bidder);
     }
@@ -32,15 +46,19 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
     }
   }
 
-  private static Dictionary<string, string> ParseMessageData(string message)
+  private static (bool IsParseError, Dictionary<string, string> Value) ParseMessageData(string message)
   {
     var data = new Dictionary<string, string>();
     foreach (var element in message.Split(";", StringSplitOptions.RemoveEmptyEntries))
     {
       var pair = element.Split(":");
+      if (pair.Length != 2)
+      {
+        return (true, new Dictionary<string, string>());
+      }
       data[pair[0].Trim()] = pair[1].Trim();
     }
 
-    return data;
+    return (false, data);
   }
 }

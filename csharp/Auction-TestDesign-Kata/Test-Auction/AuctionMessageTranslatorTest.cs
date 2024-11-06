@@ -38,7 +38,7 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageMissingCurrentPriceIsReceived()
+  public void NotifiesParseErrorWhenPriceMessageMissingCurrentPriceValueIsReceived()
   {
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: ; Increment: 7; Bidder: Someone else;";
@@ -53,7 +53,37 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageMissingIncrementIsReceived()
+  public void NotifiesParseErrorWhenPriceMessageWithInvalidCurrentPriceIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: Johnny; Increment: 7; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("PRICE", "CurrentPrice");
+  }
+
+  [Test]
+  public void NotifiesParseErrorWhenPriceMessageWithoutPriceFieldIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; Increment: 7; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("PRICE", "CurrentPrice");
+  }
+
+  [Test]
+  public void NotifiesParseErrorWhenPriceMessageMissingIncrementValueIsReceived()
   {
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: ; Bidder: Someone else;";
@@ -65,6 +95,81 @@ public class AuctionMessageTranslatorTest
 
     //THEN
     listener.ReceivedOnly(1).OnParseError("PRICE", "Increment");
+  }
+
+  [Test]
+  public void NotifiesParseErrorWhenPriceMessageWithoutIncrementFieldIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("PRICE", "Increment");
+  }
+
+  [Test]
+  public void NotifiesContentParseErrorTooManyFieldSeparators()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; ; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("PRICE", "Content");
+  }
+
+  [Test]
+  public void NotifiesParseErrorWhenPriceMessageWithInvalidIncrementIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: JOHNNY; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("PRICE", "Increment");
+  }
+
+  [Test]
+  public void NotifiesParseErrorWhenPriceMessageMissingBidderValueIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: ;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("PRICE", "Bidder");
+  }
+
+  [Test]
+  public void NotifiesParseErrorWhenPriceMessageWithoutBidderFieldIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("PRICE", "Bidder");
   }
 
   [Test]
