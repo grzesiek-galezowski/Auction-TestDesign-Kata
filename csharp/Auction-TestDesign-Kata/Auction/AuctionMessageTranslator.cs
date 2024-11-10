@@ -10,7 +10,7 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
     
     if (data.IsParseError)
     {
-      listener.OnParseError("MESSAGE", "Content");
+      listener.OnParseError();
       return;
     }
 
@@ -27,17 +27,17 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
 
       if (!int.TryParse(currentPriceString, out var currentPrice))
       {
-        listener.OnParseError("PRICE", "CurrentPrice");
+        listener.OnInvalidField("PRICE", "CurrentPrice");
         return;
       }
       if (!int.TryParse(incrementString, out var increment))
       {
-        listener.OnParseError("PRICE", "Increment");
+        listener.OnInvalidField("PRICE", "Increment");
         return;
       }
       if (string.IsNullOrWhiteSpace(bidder))
       {
-        listener.OnParseError("PRICE", "Bidder");
+        listener.OnInvalidField("PRICE", "Bidder");
         return;
       }
 

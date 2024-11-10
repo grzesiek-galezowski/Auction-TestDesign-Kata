@@ -49,7 +49,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "CurrentPrice");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "CurrentPrice");
   }
 
   [Test]
@@ -64,7 +64,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "CurrentPrice");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "CurrentPrice");
   }
 
   [Test]
@@ -79,7 +79,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "CurrentPrice");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "CurrentPrice");
   }
 
   [Test]
@@ -94,7 +94,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "Increment");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "Increment");
   }
 
   [Test]
@@ -109,7 +109,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "Increment");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "Increment");
   }
 
   [Test]
@@ -124,7 +124,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("MESSAGE", "Content");
+    listener.ReceivedOnly(1).OnParseError();
   }
 
   [Test]
@@ -139,7 +139,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "Increment");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "Increment");
   }
 
   [Test]
@@ -154,7 +154,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "Bidder");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "Bidder");
   }
 
   [Test]
@@ -169,7 +169,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "Bidder");
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "Bidder");
   }
 
   [Test]
@@ -184,7 +184,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("MESSAGE", "Content");
+    listener.ReceivedOnly(1).OnParseError();
   }
 
   [Test]

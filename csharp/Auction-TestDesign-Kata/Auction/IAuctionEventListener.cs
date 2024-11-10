@@ -6,5 +6,6 @@ public interface IAuctionEventListener
   void OnAuctionClosed();
   void OnBidDetails(int price, int increment, string bidder);
   void OnUnknownMessage();
-  void OnParseError(string messageName, string invalidField);
+  void OnParseError(); //bug
+  void OnInvalidField(string messageName, string fieldName);
 }
