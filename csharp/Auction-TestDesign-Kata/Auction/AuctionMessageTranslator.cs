@@ -1,4 +1,6 @@
-﻿namespace Auction;
+﻿using Core.Maybe;
+
+namespace Auction;
 
 public class AuctionMessageTranslator(IAuctionEventListener listener)
 {
@@ -12,17 +14,16 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
       return;
     }
 
-    if (message.Contains("CLOSE"))
+    var maybeEventType = data.ValuesByKey.Lookup("Event");
+    if (maybeEventType == "CLOSE".Just())
     {
       listener.OnAuctionClosed();
     }
-    else if (message.Contains("PRICE"))
+    else if (maybeEventType == "PRICE".Just())
     {
-
-
-      data.Value.TryGetValue("CurrentPrice", out var currentPriceString);
-      data.Value.TryGetValue("Increment", out var incrementString);
-      data.Value.TryGetValue("Bidder", out var bidder);
+      data.ValuesByKey.TryGetValue("CurrentPrice", out var currentPriceString);
+      data.ValuesByKey.TryGetValue("Increment", out var incrementString);
+      data.ValuesByKey.TryGetValue("Bidder", out var bidder);
 
       if (!int.TryParse(currentPriceString, out var currentPrice))
       {
@@ -48,7 +49,7 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
     }
   }
 
-  private static (bool IsParseError, Dictionary<string, string> Value) ParseMessageData(string message)
+  private static (bool IsParseError, Dictionary<string, string> ValuesByKey) ParseMessageData(string message)
   {
     var data = new Dictionary<string, string>();
     foreach (var element in message.Split(";", StringSplitOptions.RemoveEmptyEntries))
