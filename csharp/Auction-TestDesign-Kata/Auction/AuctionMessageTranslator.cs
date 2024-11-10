@@ -4,19 +4,21 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
 {
   public void ProcessMessage(string message)
   {
+    var data = ParseMessageData(message);
+    
+    if (data.IsParseError)
+    {
+      listener.OnParseError("MESSAGE", "Content");
+      return;
+    }
+
     if (message.Contains("CLOSE"))
     {
       listener.OnAuctionClosed();
     }
     else if (message.Contains("PRICE"))
     {
-      var data = ParseMessageData(message);
 
-      if (data.IsParseError)
-      {
-        listener.OnParseError("PRICE", "Content");
-        return;
-      }
 
       data.Value.TryGetValue("CurrentPrice", out var currentPriceString);
       data.Value.TryGetValue("Increment", out var incrementString);

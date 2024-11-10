@@ -124,7 +124,7 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnParseError("PRICE", "Content");
+    listener.ReceivedOnly(1).OnParseError("MESSAGE", "Content");
   }
 
   [Test]
@@ -173,10 +173,25 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesUnknownMessageMalformedMessageReceived()
+  public void NotifiesOnParseErrorWhenMalformedMessageReceived()
   {
     //GIVEN
     var message = Any.String();
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnParseError("MESSAGE", "Content");
+  }
+
+  [Test]
+  public void NotifiesOnUnknownMessageWhenUnsupportedMessageTypeReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: LOL; CurrentPrice: 192; Increment: 7;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
