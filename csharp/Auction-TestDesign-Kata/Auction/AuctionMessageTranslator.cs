@@ -11,41 +11,62 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
     if (data.IsParseError)
     {
       listener.OnParseError();
-      return;
-    }
-
-    var maybeEventType = data.ValuesByKey.Lookup("Event");
-    if (maybeEventType == "CLOSE".Just())
-    {
-      listener.OnAuctionClosed();
-    }
-    else if (maybeEventType == "PRICE".Just())
-    {
-      data.ValuesByKey.TryGetValue("CurrentPrice", out var currentPriceString);
-      data.ValuesByKey.TryGetValue("Increment", out var incrementString);
-      data.ValuesByKey.TryGetValue("Bidder", out var bidder);
-
-      if (!int.TryParse(currentPriceString, out var currentPrice))
-      {
-        listener.OnInvalidField("PRICE", "CurrentPrice");
-        return;
-      }
-      if (!int.TryParse(incrementString, out var increment))
-      {
-        listener.OnInvalidField("PRICE", "Increment");
-        return;
-      }
-      if (string.IsNullOrWhiteSpace(bidder))
-      {
-        listener.OnInvalidField("PRICE", "Bidder");
-        return;
-      }
-
-      listener.OnBidDetails(currentPrice, increment, bidder);
     }
     else
     {
-      listener.OnUnknownMessage();
+      var valuesByKey = data.ValuesByKey;
+
+      var maybeEventType = valuesByKey.Lookup("Event");
+      if (maybeEventType == "CLOSE".Just())
+      {
+        valuesByKey.TryGetValue("AuctionId", out var auctionId);
+
+        if (string.IsNullOrWhiteSpace(auctionId))
+        {
+          listener.OnInvalidField("CLOSE", "AuctionId");
+        }
+        else
+        {
+          listener.OnAuctionClosed(auctionId);
+        }
+      }
+      else if (maybeEventType == "PRICE".Just())
+      {
+        valuesByKey.TryGetValue("AuctionId", out var auctionId);
+        valuesByKey.TryGetValue("CurrentPrice", out var currentPriceString);
+        valuesByKey.TryGetValue("Increment", out var incrementString);
+        valuesByKey.TryGetValue("Bidder", out var bidder);
+
+        if (!int.TryParse(currentPriceString, out var currentPrice))
+        {
+          listener.OnInvalidField("PRICE", "CurrentPrice");
+          return;
+        }
+
+        if (!int.TryParse(incrementString, out var increment))
+        {
+          listener.OnInvalidField("PRICE", "Increment");
+          return;
+        }
+
+        if (string.IsNullOrWhiteSpace(bidder))
+        {
+          listener.OnInvalidField("PRICE", "Bidder");
+          return;
+        }
+
+        if (string.IsNullOrWhiteSpace(auctionId))
+        {
+          listener.OnInvalidField("PRICE", "AuctionId");
+          return;
+        }
+
+        listener.OnBidDetails(auctionId, currentPrice, increment, bidder);
+      }
+      else
+      {
+        listener.OnUnknownMessage();
+      }
     }
   }
 
@@ -59,6 +80,7 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
       {
         return (true, new Dictionary<string, string>());
       }
+
       data[pair[0].Trim()] = pair[1].Trim();
     }
 

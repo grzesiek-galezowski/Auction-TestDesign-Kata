@@ -11,6 +11,36 @@ public class AuctionMessageTranslatorTest
   public void NotifiesAuctionClosedWhenCloseMessageReceived()
   {
     //GIVEN
+    var message = "SOLVersion: 1.1; Event: CLOSE; AuctionId: 1";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnAuctionClosed("1");
+  }
+
+  [Test]
+  public void NotifiesOnInvalidFieldWhenCloseMessageMissingAuctionIdValueIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: CLOSE; AuctionId: ;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnInvalidField("CLOSE", "AuctionId");
+  }
+
+  [Test]
+  public void NotifiesOnInvalidFieldWhenCloseMessageWithoutAuctionIdFieldIsReceived()
+  {
+    //GIVEN
     var message = "SOLVersion: 1.1; Event: CLOSE;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
@@ -19,14 +49,14 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnAuctionClosed();
+    listener.ReceivedOnly(1).OnInvalidField("CLOSE", "AuctionId");
   }
 
   [Test]
   public void NotifiesBidDetailsWhenPriceMessageReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: Someone else;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -34,29 +64,14 @@ public class AuctionMessageTranslatorTest
     translator.ProcessMessage(message);
 
     //THEN
-    listener.ReceivedOnly(1).OnBidDetails(192, 7, "Someone else");
+    listener.ReceivedOnly(1).OnBidDetails("1", 192, 7, "Someone else");
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageMissingCurrentPriceValueIsReceived()
+  public void NotifiesOnInvalidFieldWhenPriceMessageMissingCurrentPriceValueIsReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: ; Increment: 7; Bidder: Someone else;";
-    var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
-
-    //WHEN
-    translator.ProcessMessage(message);
-
-    //THEN
-    listener.ReceivedOnly(1).OnInvalidField("PRICE", "CurrentPrice");
-  }
-
-  [Test]
-  public void NotifiesParseErrorWhenPriceMessageWithInvalidCurrentPriceIsReceived()
-  {
-    //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: Johnny; Increment: 7; Bidder: Someone else;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: ; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -68,10 +83,40 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageWithoutPriceFieldIsReceived()
+  public void NotifiesOnInvalidFieldWhenPriceMessageMissingAuctionIdValueIsReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; Increment: 7; Bidder: Someone else;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: ; CurrentPrice: 5; Increment: 7; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "AuctionId");
+  }
+
+  [Test]
+  public void NotifiesOnInvalidFieldWhenPriceMessageWithoutAuctionIdFieldIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 5; Increment: 7; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "AuctionId");
+  }
+  
+  [Test]
+  public void NotifiesOnInvalidFieldWhenPriceMessageWithInvalidCurrentPriceIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: Johnny; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -83,10 +128,25 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageMissingIncrementValueIsReceived()
+  public void NotifiesOnInvalidFieldWhenPriceMessageWithoutPriceFieldIsReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: ; Bidder: Someone else;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; Increment: 7; Bidder: Someone else;";
+    var listener = Substitute.For<IAuctionEventListener>();
+    var translator = new AuctionMessageTranslator(listener);
+
+    //WHEN
+    translator.ProcessMessage(message);
+
+    //THEN
+    listener.ReceivedOnly(1).OnInvalidField("PRICE", "CurrentPrice");
+  }
+
+  [Test]
+  public void NotifiesOnInvalidFieldWhenPriceMessageMissingIncrementValueIsReceived()
+  {
+    //GIVEN
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: ; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -98,10 +158,10 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageWithoutIncrementFieldIsReceived()
+  public void NotifiesOnInvalidFieldWhenPriceMessageWithoutIncrementFieldIsReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Bidder: Someone else;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -116,7 +176,7 @@ public class AuctionMessageTranslatorTest
   public void NotifiesContentParseErrorTooManyFieldSeparators()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; ; Bidder: Someone else;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; ; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -128,10 +188,10 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageWithInvalidIncrementIsReceived()
+  public void NotifiesOnInvalidFieldWhenPriceMessageWithInvalidIncrementIsReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: JOHNNY; Bidder: Someone else;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: JOHNNY; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -143,10 +203,10 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageMissingBidderValueIsReceived()
+  public void NotifiesOnInvalidFieldWhenPriceMessageMissingBidderValueIsReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7; Bidder: ;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: 7; Bidder: ;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
@@ -158,10 +218,10 @@ public class AuctionMessageTranslatorTest
   }
 
   [Test]
-  public void NotifiesParseErrorWhenPriceMessageWithoutBidderFieldIsReceived()
+  public void NotifiesOnInvalidFieldWhenPriceMessageWithoutBidderFieldIsReceived()
   {
     //GIVEN
-    var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 192; Increment: 7;";
+    var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: 7;";
     var listener = Substitute.For<IAuctionEventListener>();
     var translator = new AuctionMessageTranslator(listener);
 
