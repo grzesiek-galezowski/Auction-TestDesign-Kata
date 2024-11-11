@@ -1,4 +1,5 @@
-﻿using Core.Maybe;
+﻿using System.Collections.Immutable;
+using Core.Maybe;
 
 namespace Auction;
 
@@ -70,18 +71,18 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
     }
   }
 
-  private static (bool IsParseError, Dictionary<string, string> ValuesByKey) ParseMessageData(string message)
+  private static (bool IsParseError, ImmutableDictionary<string, string> ValuesByKey) ParseMessageData(string message)
   {
-    var data = new Dictionary<string, string>();
+    var data = ImmutableDictionary<string, string>.Empty;
     foreach (var element in message.Split(";", StringSplitOptions.RemoveEmptyEntries))
     {
       var pair = element.Split(":");
       if (pair.Length != 2)
       {
-        return (true, new Dictionary<string, string>());
+        return (true, ImmutableDictionary<string, string>.Empty);
       }
 
-      data[pair[0].Trim()] = pair[1].Trim();
+      data = data.Add(pair[0].Trim(), pair[1].Trim());
     }
 
     return (false, data);
