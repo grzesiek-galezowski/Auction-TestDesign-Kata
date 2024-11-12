@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Badeend.ValueCollections" Version="0.2.0" />
       <PackageReference Include="Core.Maybe" Version="7.0.0" />
     </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+﻿using Badeend.ValueCollections;
 using Core.Maybe;
 
 namespace Auction;
@@ -9,7 +9,7 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
   {
     var data = ParseMessageData(message);
     
-    if (data.IsParseError)
+    if (data == ParseResult.Failure)
     {
       listener.OnParseError();
     }
@@ -71,20 +71,20 @@ public class AuctionMessageTranslator(IAuctionEventListener listener)
     }
   }
 
-  private static (bool IsParseError, ImmutableDictionary<string, string> ValuesByKey) ParseMessageData(string message)
+  private static ParseResult ParseMessageData(string message)
   {
-    var data = ImmutableDictionary<string, string>.Empty;
+    var data = new ValueDictionaryBuilder<string, string>();
     foreach (var element in message.Split(";", StringSplitOptions.RemoveEmptyEntries))
     {
       var pair = element.Split(":");
       if (pair.Length != 2)
       {
-        return (true, ImmutableDictionary<string, string>.Empty);
+        return ParseResult.Failure;
       }
 
       data = data.Add(pair[0].Trim(), pair[1].Trim());
     }
 
-    return (false, data);
+    return ParseResult.Success(data.Build());
   }
 }

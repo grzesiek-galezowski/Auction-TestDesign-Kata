@@ -1,4 +1,6 @@
 using Auction;
+using Badeend.ValueCollections;
+using FluentAssertions;
 using NSubstitute;
 using TddXt.AnyRoot.Strings;
 using TddXt.XNSubstitute;
