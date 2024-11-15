@@ -9,35 +9,35 @@ namespace Test_Auction_TestDesign_Kata;
 
 public class UnknownMessageActionSpecification
 {
-    [Test]
-    public void ShouldAnyMessage()
-    {
-        // GIVEN
-        var valuesByKey = new ValueDictionaryBuilder<string, string>()
-            .Build();
-        var action = new UnknownMessageAction();
+  [Test]
+  public void ShouldAnyMessage()
+  {
+    // GIVEN
+    var valuesByKey = new ValueDictionaryBuilder<string, string>()
+        .Build();
+    var action = new UnknownMessageAction();
 
-        // WHEN
-        var result = action.Matches(valuesByKey);
+    // WHEN
+    var result = action.Matches(valuesByKey);
 
-        // THEN
-        result.Should().BeTrue();
-    }
+    // THEN
+    result.Should().BeTrue();
+  }
 
-    [Test]
-    public void ShouldNotifyListenerOfUnknownMessage()
-    {
-        // GIVEN
-        var auctionEventListener = Substitute.For<IAuctionEventListener>();
-        var valuesByKey = new ValueDictionaryBuilder<string, string>()
-            .Add("Event", Any.String())
-            .Build();
-        var action = new UnknownMessageAction();
+  [Test]
+  public void ShouldNotifyListenerOfUnknownMessage()
+  {
+    // GIVEN
+    var auctionEventListener = Substitute.For<IAuctionEventListener>();
+    var valuesByKey = new ValueDictionaryBuilder<string, string>()
+        .Add("Event", Any.String())
+        .Build();
+    var action = new UnknownMessageAction();
 
-        // WHEN
-        action.Execute(auctionEventListener, valuesByKey);
+    // WHEN
+    action.Execute(auctionEventListener, valuesByKey);
 
-        // THEN
-        auctionEventListener.ReceivedOnly(1).OnUnknownMessage();
-    }
+    // THEN
+    auctionEventListener.ReceivedOnly(1).OnUnknownMessage();
+  }
 }

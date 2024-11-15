@@ -91,7 +91,7 @@ public class OnNewPriceActionSpecification
     // THEN
     auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "AuctionId");
   }
-  
+
   [Test]
   public void ShouldReportInvalidFieldWhenBidderIsMissing()
   {

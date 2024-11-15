@@ -111,7 +111,7 @@ public class AuctionMessageTranslatorTest
     //THEN
     listener.ReceivedOnly(1).OnInvalidField("PRICE", "AuctionId");
   }
-  
+
   [Test]
   public void NotifiesOnInvalidFieldWhenPriceMessageWithInvalidCurrentPriceIsReceived()
   {
