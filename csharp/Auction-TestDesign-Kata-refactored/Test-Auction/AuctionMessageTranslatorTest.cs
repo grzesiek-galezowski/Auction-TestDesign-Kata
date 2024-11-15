@@ -1,6 +1,4 @@
 using Auction;
-using Badeend.ValueCollections;
-using FluentAssertions;
 using NSubstitute;
 using TddXt.AnyRoot.Strings;
 using TddXt.XNSubstitute;
@@ -15,7 +13,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: CLOSE; AuctionId: 1";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -30,7 +28,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: CLOSE; AuctionId: ;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -45,7 +43,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: CLOSE;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -60,7 +58,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -75,7 +73,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: ; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -90,7 +88,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: ; CurrentPrice: 5; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -105,7 +103,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; CurrentPrice: 5; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -120,7 +118,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: Johnny; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -135,7 +133,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; Increment: 7; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -150,7 +148,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: ; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -165,7 +163,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -180,7 +178,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; ; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -195,7 +193,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: JOHNNY; Bidder: Someone else;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -210,7 +208,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: 7; Bidder: ;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -225,7 +223,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: PRICE; AuctionId: 1; CurrentPrice: 192; Increment: 7;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -240,7 +238,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = Any.String();
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
@@ -255,7 +253,7 @@ public class AuctionMessageTranslatorTest
     //GIVEN
     var message = "SOLVersion: 1.1; Event: LOL; CurrentPrice: 192; Increment: 7;";
     var listener = Substitute.For<IAuctionEventListener>();
-    var translator = new AuctionMessageTranslator(listener);
+    var translator = AuctionMessageTranslator.CreateInstance(listener);
 
     //WHEN
     translator.ProcessMessage(message);
