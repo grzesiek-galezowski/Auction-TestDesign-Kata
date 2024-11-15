@@ -2,11 +2,6 @@ using Badeend.ValueCollections;
 
 namespace Auction;
 
-public interface IXmppParser
-{
-  ParseResult ConvertToDictionary(string message);
-}
-
 public class XmppParser : IXmppParser
 {
   public ParseResult ConvertToDictionary(string message)
