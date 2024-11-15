@@ -5,6 +5,7 @@ using NSubstitute;
 using TddXt.AnyRoot.Strings;
 using TddXt.AnyRoot;
 using TddXt.AnyRoot.Numbers;
+using TddXt.XNSubstitute;
 
 namespace Test_Auction_TestDesign_Kata;
 
@@ -60,7 +61,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnBidDetails(auctionId, currentPrice, increment, bidder);
+    auctionEventListener.ReceivedOnly(1).OnBidDetails(auctionId, currentPrice, increment, bidder);
   }
 
   [Test]
@@ -74,7 +75,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "AuctionId");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "AuctionId");
   }
 
   [Test]
@@ -88,7 +89,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "AuctionId");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "AuctionId");
   }
   
   [Test]
@@ -102,7 +103,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "Bidder");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "Bidder");
   }
 
   [Test]
@@ -116,7 +117,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "Bidder");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "Bidder");
   }
 
 
@@ -131,7 +132,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "CurrentPrice");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "CurrentPrice");
   }
 
   [Test]
@@ -146,7 +147,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "CurrentPrice");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "CurrentPrice");
   }
 
   [Test]
@@ -160,7 +161,7 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "Increment");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "Increment");
   }
 
   [Test]
@@ -175,10 +176,10 @@ public class OnNewPriceActionSpecification
     new OnNewPriceAction().Execute(auctionEventListener, valuesByKey);
 
     // THEN
-    auctionEventListener.Received(1).OnInvalidField("PRICE", "Increment");
+    auctionEventListener.ReceivedOnly(1).OnInvalidField("PRICE", "Increment");
   }
 
-  private ValueDictionary<string, string> ValidDictionary()
+  private static ValueDictionary<string, string> ValidDictionary()
   {
     return new ValueDictionaryBuilder<string, string>()
       .Add("AuctionId", Any.String())
@@ -186,5 +187,4 @@ public class OnNewPriceActionSpecification
       .Add("Increment", Any.Integer().ToString())
       .Add("Bidder", Any.String()).Build();
   }
-
 }
