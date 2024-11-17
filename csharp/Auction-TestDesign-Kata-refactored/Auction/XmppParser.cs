@@ -7,7 +7,8 @@ public class XmppParser : IXmppParser
   public ParseResult ConvertToDictionary(string message)
   {
     var data = new ValueDictionaryBuilder<string, string>();
-    foreach (var element in message.Split(";", StringSplitOptions.RemoveEmptyEntries))
+    var elements = message.Split(";", StringSplitOptions.RemoveEmptyEntries);
+    foreach (var element in elements)
     {
       var pair = element.Split(":");
       if (pair.Length != 2)
@@ -18,6 +19,13 @@ public class XmppParser : IXmppParser
       data = data.Add(pair[0].Trim(), pair[1].Trim());
     }
 
-    return ParseResult.Success(data.Build());
+    var valuesByKey = data.Build();
+
+    if (!valuesByKey.ContainsKey("Event"))
+    {
+      return ParseResult.Unknown;
+    }
+
+    return ParseResult.Success(valuesByKey, valuesByKey["Event"]);
   }
 }

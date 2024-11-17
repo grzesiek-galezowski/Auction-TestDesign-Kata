@@ -8,7 +8,7 @@ namespace Test_Auction_TestDesign_Kata;
 public class XmppParserSpecification
 {
   [Test]
-  public void ShouldParseValidMessageWithSingleKeyValuePair()
+  public void ShouldParseValidMessageEventNameOnly()
   {
     // GIVEN
     var parser = new XmppParser();
@@ -21,11 +21,11 @@ public class XmppParserSpecification
     var result = parser.ConvertToDictionary(message);
 
     // THEN
-    result.Should().Be(ParseResult.Success(expectedDict));
+    result.Should().Be(ParseResult.Success(expectedDict, "CLOSE"));
   }
 
   [Test]
-  public void ShouldParseValidMessageWithMultipleKeyValuePairs()
+  public void ShouldParseValidMessageWithEventNameAndMultipleProperties()
   {
     // GIVEN
     var parser = new XmppParser();
@@ -41,11 +41,11 @@ public class XmppParserSpecification
     var result = parser.ConvertToDictionary(message);
 
     // THEN
-    result.Should().Be(ParseResult.Success(expectedDict));
+    result.Should().Be(ParseResult.Success(expectedDict, "PRICE"));
   }
 
   [Test]
-  public void ShouldHandleWhitespaceAroundKeysAndValues()
+  public void ShouldIgnoreWhitespaceAroundKeysAndValues()
   {
     // GIVEN
     var parser = new XmppParser();
@@ -59,7 +59,7 @@ public class XmppParserSpecification
     var result = parser.ConvertToDictionary(message);
 
     // THEN
-    result.Should().Be(ParseResult.Success(expectedDict));
+    result.Should().Be(ParseResult.Success(expectedDict, "CLOSE"));
   }
 
   [Test]
@@ -91,7 +91,7 @@ public class XmppParserSpecification
   }
 
   [Test]
-  public void ShouldHandleEmptyMessage()
+  public void ShouldReturnUnknownMessageResultForEmptyMessage()
   {
     // GIVEN
     var parser = new XmppParser();
@@ -101,11 +101,25 @@ public class XmppParserSpecification
     var result = parser.ConvertToDictionary(message);
 
     // THEN
-    result.Should().Be(ParseResult.Success(ValueDictionary<string, string>.Empty));
+    result.Should().Be(ParseResult.Unknown);
   }
 
   [Test]
-  public void ShouldHandleMessageWithOnlySemicolons()
+  public void ShouldReturnUnknownMessageResultForMessageWithoutEventName()
+  {
+    // GIVEN
+    var parser = new XmppParser();
+    var message = "Key:Value;";
+
+    // WHEN
+    var result = parser.ConvertToDictionary(message);
+
+    // THEN
+    result.Should().Be(ParseResult.Unknown);
+  }
+
+  [Test]
+  public void ShouldTreatMessageWithOnlySemicolonsAsUnknown()
   {
     // GIVEN
     var parser = new XmppParser();
@@ -115,6 +129,6 @@ public class XmppParserSpecification
     var result = parser.ConvertToDictionary(message);
 
     // THEN
-    result.Should().Be(ParseResult.Success(ValueDictionary<string, string>.Empty));
+    result.Should().Be(ParseResult.Unknown);
   }
 }

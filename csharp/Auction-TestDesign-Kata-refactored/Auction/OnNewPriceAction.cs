@@ -1,5 +1,4 @@
 using Badeend.ValueCollections;
-using Core.Maybe;
 
 namespace Auction;
 
@@ -39,8 +38,8 @@ public class OnNewPriceAction : IMessageAction
     auctionEventListener.OnBidDetails(auctionId, currentPrice, increment, bidder);
   }
 
-  public bool Matches(ValueDictionary<string, string> valuesByKey)
+  public bool Matches(string eventName)
   {
-    return valuesByKey.Lookup("Event") == "PRICE".Just();
+    return eventName == "PRICE";
   }
 }

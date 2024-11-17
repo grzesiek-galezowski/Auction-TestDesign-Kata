@@ -1,5 +1,4 @@
 using Badeend.ValueCollections;
-using Core.Maybe;
 
 namespace Auction;
 
@@ -19,8 +18,8 @@ public class OnCloseAction : IMessageAction
     }
   }
 
-  public bool Matches(ValueDictionary<string, string> valuesByKey)
+  public bool Matches(string eventName)
   {
-    return valuesByKey.Lookup("Event") == "CLOSE".Just();
+    return eventName == "CLOSE";
   }
 }

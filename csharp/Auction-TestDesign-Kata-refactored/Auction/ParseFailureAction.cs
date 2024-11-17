@@ -2,15 +2,15 @@ using Badeend.ValueCollections;
 
 namespace Auction;
 
-public class UnknownMessageAction : IMessageAction
+public class ParseFailureAction : IMessageAction
 {
   public void Execute(IAuctionEventListener auctionEventListener, ValueDictionary<string, string> valuesByKey)
   {
-    auctionEventListener.OnUnknownMessage();
+    auctionEventListener.OnParseError();
   }
 
   public bool Matches(string eventName)
   {
-    return true;
+    return eventName == "PARSE_FAILURE";
   }
 }

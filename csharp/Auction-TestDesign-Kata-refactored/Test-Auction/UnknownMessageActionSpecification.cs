@@ -10,15 +10,13 @@ namespace Test_Auction_TestDesign_Kata;
 public class UnknownMessageActionSpecification
 {
   [Test]
-  public void ShouldAnyMessage()
+  public void ShouldMatchAnyEventType()
   {
     // GIVEN
-    var valuesByKey = new ValueDictionaryBuilder<string, string>()
-        .Build();
     var action = new UnknownMessageAction();
 
     // WHEN
-    var result = action.Matches(valuesByKey);
+    var result = action.Matches(Any.String());
 
     // THEN
     result.Should().BeTrue();

@@ -13,12 +13,10 @@ public class OnCloseActionSpecification
   public void ShouldMatchCloseEvent()
   {
     // GIVEN
-    var valuesByKey = new ValueDictionaryBuilder<string, string>()
-      .Add("Event", "CLOSE")
-      .Build();
+    var onCloseAction = new OnCloseAction();
 
     // WHEN
-    var result = new OnCloseAction().Matches(valuesByKey);
+    var result = onCloseAction.Matches("CLOSE");
 
     // THEN
     result.Should().BeTrue();
@@ -28,12 +26,10 @@ public class OnCloseActionSpecification
   public void ShouldNotMatchNonCloseEvent()
   {
     // GIVEN
-    var valuesByKey = new ValueDictionaryBuilder<string, string>()
-      .Add("Event", Any.OtherThan("CLOSE"))
-      .Build();
+    var onCloseAction = new OnCloseAction();
 
     // WHEN
-    var result = new OnCloseAction().Matches(valuesByKey);
+    var result = onCloseAction.Matches(Any.OtherThan("CLOSE"));
 
     // THEN
     result.Should().BeFalse();

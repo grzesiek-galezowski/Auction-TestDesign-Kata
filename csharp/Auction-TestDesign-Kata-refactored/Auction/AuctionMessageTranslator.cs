@@ -1,31 +1,29 @@
 using Core.Maybe;
 
-namespace Auction
+namespace Auction;
+
+public class AuctionMessageTranslator(
+  IAuctionEventListener listener,
+  List<IMessageAction> actions,
+  IXmppParser xmppParser)
 {
-  public class AuctionMessageTranslator(IAuctionEventListener listener, List<IMessageAction> actions, IXmppParser xmppParser)
+  public static AuctionMessageTranslator CreateInstance(IAuctionEventListener listener)
   {
-    public static AuctionMessageTranslator CreateInstance(IAuctionEventListener listener)
-    {
-      return new AuctionMessageTranslator(listener,
-        new List<IMessageAction> { new OnCloseAction(), new OnNewPriceAction(), new UnknownMessageAction() }, new XmppParser());
-    }
+    return new AuctionMessageTranslator(listener,
+    [
+      new ParseFailureAction(),
+      new OnCloseAction(),
+      new OnNewPriceAction(),
+      new UnknownMessageAction()
+    ], new XmppParser());
+  }
 
-    public void ProcessMessage(string message)
-    {
-      var data = xmppParser.ConvertToDictionary(message);
+  public void ProcessMessage(string message)
+  {
+    var result = xmppParser.ConvertToDictionary(message);
 
-      if (data is { IsParseError: true })
-      {
-        listener.OnParseError();
-      }
-      else
-      {
-        var valuesByKey = data.ValuesByKey;
-
-        actions
-          .FirstMaybe(a => a.Matches(valuesByKey))
-          .Do(a => a.Execute(listener, valuesByKey));
-      }
-    }
+    actions
+      .FirstMaybe(a => a.Matches(result.EventType))
+      .Do(a => a.Execute(listener, result.ValuesByKey));
   }
 }

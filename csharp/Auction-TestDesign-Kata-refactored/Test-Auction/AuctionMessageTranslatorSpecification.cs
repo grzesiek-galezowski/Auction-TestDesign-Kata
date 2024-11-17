@@ -2,7 +2,6 @@ using Auction;
 using Badeend.ValueCollections;
 using NSubstitute;
 using TddXt.AnyRoot.Collections;
-using TddXt.AnyRoot.Exploding;
 using TddXt.AnyRoot.Strings;
 using TddXt.XNSubstitute;
 
@@ -10,27 +9,6 @@ namespace Test_Auction_TestDesign_Kata;
 
 public class AuctionMessageTranslatorSpecification
 {
-  [Test]
-  public void ShouldNotifyListenerAboutParseErrorWhenParserReturnsFailure()
-  {
-    // GIVEN
-    var message = Any.String();
-    var listener = Substitute.For<IAuctionEventListener>();
-    var parser = Substitute.For<IXmppParser>();
-    var translator = new AuctionMessageTranslator(
-      listener,
-      [Any.Exploding<IMessageAction>(), Any.Exploding<IMessageAction>(), Any.Exploding<IMessageAction>()],
-      parser);
-
-    parser.ConvertToDictionary(message).Returns(ParseResult.Failure);
-
-    // WHEN
-    translator.ProcessMessage(message);
-
-    // THEN
-    listener.ReceivedOnly(1).OnParseError();
-  }
-
   [Test]
   public void ShouldExecuteFirstMatchingAction()
   {
@@ -42,14 +20,15 @@ public class AuctionMessageTranslatorSpecification
     var action1 = Substitute.For<IMessageAction>();
     var action2 = Substitute.For<IMessageAction>();
     var action3 = Substitute.For<IMessageAction>();
+    var eventType = Any.String();
     var translator = new AuctionMessageTranslator(
       listener,
       [action1, action2, action3],
       parser);
-    parser.ConvertToDictionary(message).Returns(ParseResult.Success(valuesByKey));
-    action1.Matches(valuesByKey).Returns(false);
-    action2.Matches(valuesByKey).Returns(true);
-    action3.Matches(valuesByKey).Returns(false);
+    parser.ConvertToDictionary(message).Returns(ParseResult.Success(valuesByKey, eventType));
+    action1.Matches(eventType).Returns(false);
+    action2.Matches(eventType).Returns(true);
+    action3.Matches(eventType).Returns(false);
 
     // WHEN
     translator.ProcessMessage(message);
@@ -71,15 +50,16 @@ public class AuctionMessageTranslatorSpecification
     var action1 = Substitute.For<IMessageAction>();
     var action2 = Substitute.For<IMessageAction>();
     var action3 = Substitute.For<IMessageAction>();
+    var eventType = Any.String();
     var translator = new AuctionMessageTranslator(
       listener,
       [action1, action2, action3],
       parser);
 
-    parser.ConvertToDictionary(message).Returns(ParseResult.Success(valuesByKey));
-    action1.Matches(valuesByKey).Returns(true);
-    action2.Matches(valuesByKey).Returns(true);
-    action3.Matches(valuesByKey).Returns(true);
+    parser.ConvertToDictionary(message).Returns(ParseResult.Success(valuesByKey, eventType));
+    action1.Matches(eventType).Returns(true);
+    action2.Matches(eventType).Returns(true);
+    action3.Matches(eventType).Returns(true);
 
     // WHEN
     translator.ProcessMessage(message);
@@ -101,14 +81,15 @@ public class AuctionMessageTranslatorSpecification
     var action1 = Substitute.For<IMessageAction>();
     var action2 = Substitute.For<IMessageAction>();
     var action3 = Substitute.For<IMessageAction>();
+    var eventType = Any.String();
     var translator = new AuctionMessageTranslator(
       listener,
       [action1, action2, action3],
       parser);
-    parser.ConvertToDictionary(message).Returns(ParseResult.Success(valuesByKey));
-    action1.Matches(valuesByKey).Returns(false);
-    action2.Matches(valuesByKey).Returns(false);
-    action3.Matches(valuesByKey).Returns(false);
+    parser.ConvertToDictionary(message).Returns(ParseResult.Success(valuesByKey, eventType));
+    action1.Matches(eventType).Returns(false);
+    action2.Matches(eventType).Returns(false);
+    action3.Matches(eventType).Returns(false);
 
     // WHEN
     translator.ProcessMessage(message);

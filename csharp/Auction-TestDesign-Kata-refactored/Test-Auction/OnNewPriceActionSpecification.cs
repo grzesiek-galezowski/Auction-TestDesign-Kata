@@ -15,12 +15,10 @@ public class OnNewPriceActionSpecification
   public void ShouldMatchPriceEvent()
   {
     // GIVEN
-    var valuesByKey = new ValueDictionaryBuilder<string, string>()
-      .Add("Event", "PRICE")
-      .Build();
+    var action = new OnNewPriceAction();
 
     // WHEN
-    var result = new OnNewPriceAction().Matches(valuesByKey);
+    var result = action.Matches("PRICE");
 
     // THEN
     result.Should().BeTrue();
@@ -30,12 +28,10 @@ public class OnNewPriceActionSpecification
   public void ShouldNotMatchNonPriceEvent()
   {
     // GIVEN
-    var valuesByKey = new ValueDictionaryBuilder<string, string>()
-      .Add("Event", Any.OtherThan("PRICE"))
-      .Build();
+    var onNewPriceAction = new OnNewPriceAction();
 
     // WHEN
-    var result = new OnNewPriceAction().Matches(valuesByKey);
+    var result = onNewPriceAction.Matches(Any.OtherThan("PRICE"));
 
     // THEN
     result.Should().BeFalse();

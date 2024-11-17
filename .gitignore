@@ -7,3 +7,4 @@
 *.cache
 csharp/Auction-TestDesign-Kata/Auction-TestDesign-Kata.v3.ncrunchsolution.user
 csharp/Auction-TestDesign-Kata-refactored/Auction-TestDesign-Kata.v3.ncrunchsolution.user
+*.TMP
